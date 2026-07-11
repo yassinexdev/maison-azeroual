@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Catalogue — Maison Azerwal</title>
+<meta name="description" content="Découvrez notre catalogue de pièces montées de mariage artisanales. Maison Azerwal, pâtisserie d'art nuptiale.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@200;300;400;500&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #faf6f0;
+    --parchment: #f5ede0;
+    --blush: #e8c5b0;
+    --blush-deep: #d4a088;
+    --gold: #c9a96e;
+    --gold-light: #e4cc99;
+    --gold-pale: #f0e4c8;
+    --charcoal: #2a2218;
+    --warm-brown: #5c3d2e;
+    --text-mid: #7a6255;
+    --text-light: #b09880;
+    --white: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    background: var(--parchment);
+    color: var(--charcoal);
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ══ HEADER ══ */
+  .cat-header {
+    background: var(--charcoal);
+    padding: 36px 40px 32px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cat-header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 100% at 50% 0%, rgba(201,169,110,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .cat-header-ornament {
+    font-size: 0.62rem; letter-spacing: 0.4em;
+    text-transform: uppercase; color: var(--gold);
+    margin-bottom: 16px;
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+  }
+  .cat-header-ornament::before,
+  .cat-header-ornament::after {
+    content: ''; width: 48px; height: 1px; background: var(--gold); opacity: 0.6;
+  }
+  .cat-logo {
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(2.6rem, 7vw, 4rem);
+    color: var(--white);
+    letter-spacing: 0.02em;
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+  .cat-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(0.95rem, 2.5vw, 1.2rem);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--gold-light);
+    letter-spacing: 0.08em;
+    margin-bottom: 28px;
+  }
+  .cat-header-divider {
+    width: 1px; height: 40px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    margin: 0 auto;
+  }
+
+  /* ══ INTRO STRIP ══ */
+  .cat-intro {
+    background: var(--cream);
+    padding: 40px 40px 36px;
+    text-align: center;
+    border-bottom: 1px solid var(--blush);
+  }
+  .cat-intro-label {
+    font-size: 0.62rem; letter-spacing: 0.35em;
+    text-transform: uppercase; color: var(--gold);
+    margin-bottom: 12px;
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+  }
+  .cat-intro-label::before,
+  .cat-intro-label::after { content: ''; width: 28px; height: 1px; background: var(--gold); }
+  .cat-intro h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    font-weight: 300; line-height: 1.2;
+    color: var(--charcoal); margin-bottom: 14px;
+  }
+  .cat-intro h1 em { font-style: italic; color: var(--warm-brown); }
+  .cat-intro p {
+    font-size: 0.9rem; line-height: 1.9;
+    color: var(--text-mid);
+    max-width: 520px; margin: 0 auto;
+  }
+
+  /* ══ GRID ══ */
+  .cat-body {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 52px 32px 60px;
+  }
+  .cat-count {
+    font-size: 0.65rem; letter-spacing: 0.3em;
+    text-transform: uppercase; color: var(--text-light);
+    text-align: center; margin-bottom: 40px;
+  }
+  .cat-count span { color: var(--gold); font-weight: 400; }
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+  }
+
+  /* ══ CAKE CARD ══ */
+  .cake-card {
+    background: var(--white);
+    overflow: hidden;
+    box-shadow: 0 2px 20px rgba(90,40,20,0.06);
+    transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s;
+    cursor: pointer;
+  }
+  .cake-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 24px 56px rgba(90,40,20,0.14);
+  }
+  .cake-img-wrap {
+    height: 280px; overflow: hidden; position: relative;
+  }
+  .cake-img-wrap img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.6s ease; display: block;
+  }
+  .cake-card:hover .cake-img-wrap img { transform: scale(1.06); }
+  .cake-img-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(42,34,24,0.6) 0%, transparent 55%);
+    opacity: 0; transition: opacity 0.4s;
+    display: flex; align-items: flex-end; padding: 20px;
+  }
+  .cake-card:hover .cake-img-overlay { opacity: 1; }
+  .overlay-tag {
+    font-size: 0.62rem; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--gold-light);
+    border: 1px solid var(--gold-light); padding: 6px 14px;
+  }
+  /* Number badge */
+  .cake-num-badge {
+    position: absolute; top: 16px; left: 16px;
+    background: var(--charcoal);
+    color: var(--gold);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    padding: 5px 10px;
+    letter-spacing: 0.1em;
+  }
+  .cake-body { padding: 22px 26px 26px; }
+  .cake-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem; font-weight: 400;
+    color: var(--charcoal); margin-bottom: 10px;
+  }
+  .cake-desc {
+    font-size: 0.84rem; color: var(--text-mid); line-height: 1.75;
+    margin-bottom: 18px;
+  }
+  .cake-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 0.65rem; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--gold);
+    transition: gap 0.3s;
+  }
+  .cake-cta::after { content: '→'; }
+  .cake-card:hover .cake-cta { gap: 14px; }
+
+  /* ══ LIGHTBOX ══ */
+  .lightbox {
+    position: fixed; inset: 0;
+    background: rgba(42,34,24,0.95);
+    z-index: 9000;
+    display: none; align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox-inner {
+    max-width: 680px; width: 100%;
+    background: var(--cream); overflow: hidden;
+    animation: lbReveal 0.4s cubic-bezier(0.22,1,0.36,1);
+    position: relative;
+  }
+  @keyframes lbReveal { from{opacity:0;transform:scale(0.94)} to{opacity:1;transform:scale(1)} }
+  .lightbox-img { width: 100%; max-height: 55vh; object-fit: cover; display: block; }
+  .lightbox-body { padding: 28px 32px 32px; }
+  .lightbox-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.9rem; font-weight: 400;
+    color: var(--charcoal); margin-bottom: 12px;
+  }
+  .lightbox-desc { font-size: 0.9rem; color: var(--text-mid); line-height: 1.8; margin-bottom: 24px; }
+  .lightbox-wa {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: #25D366; color: var(--white);
+    padding: 14px 28px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.75rem; letter-spacing: 0.18em;
+    text-transform: uppercase; font-weight: 400;
+    text-decoration: none;
+    transition: background 0.3s, transform 0.3s;
+  }
+  .lightbox-wa:hover { background: #1ebe5d; transform: translateY(-2px); }
+  .lightbox-close {
+    position: absolute; top: 16px; right: 20px;
+    font-size: 1.8rem; color: var(--white); cursor: pointer;
+    background: none; border: none; font-family: sans-serif;
+    line-height: 1; transition: color 0.3s;
+    mix-blend-mode: normal;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    z-index: 2;
+  }
+  .lightbox-close:hover { color: var(--gold-light); }
+
+  /* ══ STICKY WHATSAPP ══ */
+  .wa-sticky {
+    position: fixed; bottom: 28px; right: 28px;
+    background: #25D366;
+    color: var(--white);
+    border-radius: 50px;
+    padding: 14px 24px 14px 20px;
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.75rem; letter-spacing: 0.15em;
+    text-transform: uppercase; font-weight: 400;
+    box-shadow: 0 6px 28px rgba(37,211,102,0.4);
+    z-index: 8000;
+    transition: transform 0.3s, box-shadow 0.3s;
+    animation: waPulse 3s ease-in-out infinite;
+  }
+  .wa-sticky:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 36px rgba(37,211,102,0.5);
+    animation: none;
+  }
+  .wa-sticky svg { flex-shrink: 0; }
+  @keyframes waPulse {
+    0%,100% { transform: translateY(0); box-shadow: 0 6px 28px rgba(37,211,102,0.4); }
+    50% { transform: translateY(-4px); box-shadow: 0 12px 36px rgba(37,211,102,0.55); }
+  }
+
+  /* ══ FOOTER ══ */
+  .cat-footer {
+    background: var(--charcoal);
+    padding: 32px 40px;
+    text-align: center;
+  }
+  .cat-footer-logo {
+    font-family: 'Great Vibes', cursive;
+    font-size: 2rem; color: var(--gold);
+    margin-bottom: 10px;
+  }
+  .cat-footer-text {
+    font-size: 0.72rem; letter-spacing: 0.15em;
+    color: rgba(250,246,240,0.35);
+    text-transform: uppercase;
+  }
+  .cat-footer-contact {
+    margin-top: 20px;
+    display: flex; align-items: center; justify-content: center; gap: 24px;
+    flex-wrap: wrap;
+  }
+  .cat-footer-contact a {
+    font-size: 0.78rem; color: rgba(250,246,240,0.55);
+    text-decoration: none; letter-spacing: 0.05em;
+    transition: color 0.3s;
+  }
+  .cat-footer-contact a:hover { color: var(--gold); }
+
+  /* ══ RESPONSIVE ══ */
+  @media (max-width: 700px) {
+    .cat-header { padding: 28px 24px 24px; }
+    .cat-intro { padding: 32px 24px; }
+    .cat-body { padding: 36px 20px 80px; }
+    .cat-grid { grid-template-columns: 1fr; gap: 20px; }
+    .wa-sticky span { display: none; }
+    .wa-sticky { padding: 16px; border-radius: 50%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header class="cat-header">
+  <div class="cat-header-ornament">Pâtisserie d'Art Nuptiale</div>
+  <div class="cat-logo">Maison Azerwal</div>
+  <div class="cat-tagline">Catalogue de Mariage · Édition 2025</div>
+  <div class="cat-header-divider"></div>
+</header>
+
+<!-- ══ INTRO ══ -->
+<div class="cat-intro">
+  <div class="cat-intro-label">Notre Sélection</div>
+  <h1>Pièces Montées <em>de Mariage</em></h1>
+  <p>
+    Chaque création est conçue sur mesure pour votre journée unique.
+    Cliquez sur un modèle pour en voir les détails et nous contacter directement.
+  </p>
+</div>
+
+<!-- ══ CATALOG GRID ══ -->
+<div class="cat-body">
+  <div class="cat-count" id="catCount">Chargement…</div>
+  <div class="cat-grid" id="catGrid"></div>
+</div>
+
+<!-- ══ LIGHTBOX ══ -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+  <div class="lightbox-inner" id="lbInner">
+    <button class="lightbox-close" onclick="closeLightbox()">×</button>
+    <img src="" alt="" class="lightbox-img" id="lbImg">
+    <div class="lightbox-body">
+      <div class="lightbox-name" id="lbName"></div>
+      <div class="lightbox-desc" id="lbDesc"></div>
+      <a href="https://wa.me/212645130048" target="_blank" class="lightbox-wa" id="lbWa">
+        <svg viewBox="0 0 24 24" width="18" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Demander ce modèle
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ══ STICKY WHATSAPP ══ -->
+<a href="https://wa.me/212645130048" target="_blank" class="wa-sticky" title="Nous contacter sur WhatsApp">
+  <svg viewBox="0 0 24 24" width="22" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  <span>Nous Contacter</span>
+</a>
+
+<!-- ══ FOOTER ══ -->
+<footer class="cat-footer">
+  <div class="cat-footer-logo">Maison Azerwal</div>
+  <div class="cat-footer-contact">
+    <a href="tel:+212645130048">06 45 13 00 48</a>
+    <a href="https://wa.me/212645130048" target="_blank">WhatsApp</a>
+    <a href="https://www.instagram.com/abdo.azerwal/" target="_blank">@abdo.azerwal</a>
+    <a href="index.html">Site Principal</a>
+  </div>
+  <div class="cat-footer-text" style="margin-top:16px;">© 2025 Maison Azerwal — Tous droits réservés</div>
+</footer>
+
+<script>
+// ══ CAKE DATA (synced with main site via localStorage) ══
+const STORAGE_KEY = 'maison_azerwal_cakes';
+const DEFAULT_CAKES = [
+  { id: 1, name: 'La Grande Croquembouche', desc: 'Une pièce montée de 120 choux à la crème vanille, ornée de fils de caramel dorés et de fleurs en sucre soufflé.', img: 'https://i.postimg.cc/gJf7d2NW/Whats-App-Image-2026-03-20-at-19-12-08-(1).jpg' },
+  { id: 2, name: 'Rose Élégance', desc: 'Wedding cake 5 étages recouvert de fondant satiné ivoire, couronné de roses en sucre modelées à la main.', img: 'https://i.postimg.cc/HsbqYXq3/Whats-App-Image-2026-03-20-at-19-12-08-(10).jpg' },
+  { id: 3, name: 'Jardin Enchanté', desc: 'Semi naked cake orné de fleurs fraîches et fruits exotiques, pour un mariage bohème et poétique.', img: 'https://i.postimg.cc/Hnyf7yVn/Whats-App-Image-2026-03-20-at-19-12-08-(11).jpg' },
+  { id: 4, name: 'Pureté Ivoire', desc: 'Layer cake 4 étages, ganache vanille et décors en sucre filé dorés, pour un mariage élégant et raffiné.', img: 'https://i.postimg.cc/k5gzvZBk/Whats-App-Image-2026-03-20-at-19-12-08-(2).jpg' },
+  { id: 5, name: 'Fleurs Romantiques', desc: 'Wedding cake orné d\'une couronne de fleurs des champs en pâte à sucre et décor aquarelle délicat.', img: 'https://i.postimg.cc/Jhzv5gGT/Whats-App-Image-2026-03-20-at-19-12-08-(3).jpg' },
+  { id: 6, name: 'Velours & Passion', desc: 'Red velvet wedding cake enrobé d\'un glaçage velours bordeaux, notes de framboises et ganache montée vanille.', img: 'https://i.postimg.cc/3xBzp7JX/Whats-App-Image-2026-03-20-at-19-12-08-(4).jpg' },
+  { id: 7, name: 'Sculpture Baroque', desc: 'Pièce montée architecturale inspirée du baroque français, avec dorures à la feuille d\'or et ornements en sucre.', img: 'https://i.postimg.cc/T39BmGYr/Whats-App-Image-2026-03-20-at-19-12-08-(5).jpg' },
+  { id: 8, name: 'Jardin Japonais', desc: 'Création fusion inspirée des cerisiers en fleurs, en pâte à sucre peinte à la main façon estampe japonaise.', img: 'https://i.postimg.cc/P540Zhr4/Whats-App-Image-2026-03-20-at-19-12-08-(6).jpg' },
+  { id: 9, name: 'Tour Féerique', desc: 'Structure de 7 éléments, chaque niveau avec une saveur et une décoration distincte pour sublimer votre mariage.', img: 'https://i.postimg.cc/nhZ6CMZf/Whats-App-Image-2026-03-20-at-19-12-08-(7).jpg' },
+];
+
+// Load from localStorage (shared with main site) — only mariage cakes
+let cakes;
+try {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  const all = raw ? JSON.parse(raw) : DEFAULT_CAKES;
+  cakes = Array.isArray(all) && all.length > 0
+    ? all.filter(c => !c.cat || c.cat === 'mariage')
+    : DEFAULT_CAKES;
+  if (cakes.length === 0) cakes = DEFAULT_CAKES;
+} catch { cakes = DEFAULT_CAKES; }
+
+// ══ RENDER ══
+function render() {
+  const grid = document.getElementById('catGrid');
+  const countEl = document.getElementById('catCount');
+  grid.innerHTML = '';
+  countEl.innerHTML = `<span>${cakes.length}</span> modèle${cakes.length > 1 ? 's' : ''} disponible${cakes.length > 1 ? 's' : ''}`;
+
+  cakes.forEach((c, i) => {
+    const card = document.createElement('div');
+    card.className = 'cake-card';
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    card.innerHTML = `
+      <div class="cake-img-wrap">
+        <img src="${c.img}" alt="${c.name}" loading="lazy"
+          onerror="this.src='https://i.postimg.cc/gJf7d2NW/Whats-App-Image-2026-03-20-at-19-12-08-(1).jpg'">
+        <div class="cake-img-overlay"><span class="overlay-tag">Voir détails</span></div>
+        <div class="cake-num-badge">N°${String(i + 1).padStart(2, '0')}</div>
+      </div>
+      <div class="cake-body">
+        <div class="cake-name">${c.name}</div>
+        <div class="cake-desc">${c.desc}</div>
+        <div class="cake-cta">Voir ce modèle</div>
+      </div>`;
+    card.onclick = () => openLightbox(c);
+    grid.appendChild(card);
+
+    // Animate in
+    setTimeout(() => {
+      card.style.transition = 'opacity 0.5s ease, transform 0.5s ease, box-shadow 0.4s';
+      card.style.opacity = '1';
+      card.style.transform = 'translateY(0)';
+    }, 60 + i * 90);
+  });
+}
+
+// ══ LIGHTBOX ══
+function openLightbox(c) {
+  document.getElementById('lbImg').src = c.img;
+  document.getElementById('lbImg').alt = c.name;
+  document.getElementById('lbName').textContent = c.name;
+  document.getElementById('lbDesc').textContent = c.desc;
+  const msg = encodeURIComponent(`Bonjour, je suis intéressé(e) par le modèle "${c.name}" de votre catalogue. Pouvez-vous me donner plus d'informations ?`);
+  document.getElementById('lbWa').href = `https://wa.me/212645130048?text=${msg}`;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox(e) {
+  if (e && e.target !== document.getElementById('lightbox') && !e.target.classList.contains('lightbox-close')) return;
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Close on Escape
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.getElementById('lightbox').classList.remove('open'); document.body.style.overflow = ''; } });
+
+render();
+</script>
+</body>
+</html>

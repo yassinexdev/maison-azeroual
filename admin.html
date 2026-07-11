@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Maison Azerwal</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Jost:wght@200;300;400;500&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#faf6f0;--parchment:#f5ede0;--blush:#e8c5b0;--gold:#c9a96e;--gold-pale:#f0e4c8;--charcoal:#2a2218;--warm-brown:#5c3d2e;--text-mid:#7a6255;--text-light:#b09880;--white:#fff;--danger:#c0392b;--success:#27ae60;--sidebar:#1e1710;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Jost',sans-serif;font-weight:300;background:var(--cream);color:var(--charcoal);min-height:100vh;}
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1e1710,#2a2218 50%,#3d2e20);}
+.login-box{background:var(--cream);padding:56px 48px;max-width:420px;width:100%;text-align:center;box-shadow:0 40px 100px rgba(0,0,0,0.4);}
+.login-logo{font-family:'Great Vibes',cursive;font-size:2.4rem;color:var(--gold);margin-bottom:4px;}
+.login-sub{font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:var(--text-light);margin-bottom:40px;}
+.login-lbl{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-mid);display:block;text-align:left;margin-bottom:8px;}
+.login-input{width:100%;padding:16px 20px;border:1px solid var(--blush);background:var(--parchment);font-family:'Jost',sans-serif;font-size:1rem;font-weight:300;color:var(--charcoal);outline:none;transition:border-color .3s;margin-bottom:16px;}
+.login-input:focus{border-color:var(--gold);}
+.login-input.shake{animation:shake .4s ease;border-color:var(--danger);}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.login-btn{width:100%;padding:16px;background:var(--gold);color:var(--white);border:none;font-family:'Jost',sans-serif;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;cursor:pointer;transition:background .3s;}
+.login-btn:hover{background:var(--warm-brown);}
+.login-err{font-size:.78rem;color:var(--danger);margin-top:12px;min-height:20px;}
+.login-hint{font-size:.72rem;color:var(--text-light);margin-top:20px;line-height:1.7;}
+#adminApp{display:none;min-height:100vh;}
+.sidebar{position:fixed;top:0;left:0;width:252px;height:100vh;background:var(--sidebar);display:flex;flex-direction:column;z-index:100;overflow-y:auto;}
+.sidebar-logo{font-family:'Great Vibes',cursive;font-size:1.8rem;color:var(--gold);padding:28px 28px 24px;border-bottom:1px solid rgba(255,255,255,.07);}
+.sidebar-logo span{display:block;font-family:'Jost',sans-serif;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.3);font-weight:300;margin-top:2px;}
+.nav-grp{font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:rgba(255,255,255,.2);padding:18px 28px 6px;font-weight:400;}
+.nav-item{display:flex;align-items:center;gap:11px;padding:11px 28px;font-size:.73rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45);cursor:pointer;transition:all .25s;border-left:2px solid transparent;background:none;border-right:none;border-top:none;border-bottom:none;width:100%;text-align:left;font-family:'Jost',sans-serif;font-weight:300;}
+.nav-item:hover{color:rgba(255,255,255,.8);background:rgba(255,255,255,.04);}
+.nav-item.active{color:var(--gold);border-left-color:var(--gold);background:rgba(201,169,110,.08);}
+.nav-item svg{width:14px;height:14px;flex-shrink:0;}
+.sidebar-foot{margin-top:auto;padding:20px 28px;border-top:1px solid rgba(255,255,255,.07);}
+.view-site{display:flex;align-items:center;gap:10px;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);text-decoration:none;margin-bottom:14px;transition:color .3s;}
+.view-site:hover{color:var(--gold);}
+.logout-btn{display:flex;align-items:center;gap:10px;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.3);cursor:pointer;background:none;border:none;font-family:'Jost',sans-serif;font-weight:300;transition:color .3s;}
+.logout-btn:hover{color:var(--danger);}
+.main{margin-left:252px;padding:44px 48px;min-height:100vh;}
+.page-hdr{margin-bottom:32px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+.page-title{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--charcoal);}
+.page-title em{font-style:italic;color:var(--warm-brown);}
+.page-sub{font-size:.83rem;color:var(--text-light);margin-top:4px;}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px;}
+.stat-card{background:var(--white);padding:20px 24px;border-left:3px solid var(--gold);box-shadow:0 2px 12px rgba(90,40,20,.06);}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;color:var(--charcoal);}
+.stat-lbl{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-light);margin-top:2px;}
+.ecard{background:var(--white);padding:32px 36px;box-shadow:0 2px 20px rgba(90,40,20,.06);margin-bottom:24px;}
+.ecard-title{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:400;color:var(--charcoal);margin-bottom:22px;padding-bottom:12px;border-bottom:1px solid var(--parchment);display:flex;align-items:center;gap:10px;}
+.fg{display:flex;flex-direction:column;gap:7px;}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.fgrid .full{grid-column:1/-1;}
+.fl{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-mid);}
+.fi{padding:12px 15px;border:1px solid var(--blush);background:var(--parchment);font-family:'Jost',sans-serif;font-size:.9rem;font-weight:300;color:var(--charcoal);outline:none;transition:border-color .3s;width:100%;}
+.fi:focus{border-color:var(--gold);background:var(--white);}
+textarea.fi{resize:vertical;}
+.img-row{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;}
+.img-box{flex-shrink:0;overflow:hidden;position:relative;border:1px solid var(--blush);background:var(--parchment);display:flex;align-items:center;justify-content:center;}
+.img-box img{width:100%;height:100%;object-fit:cover;display:block;}
+.img-ph{font-size:1.8rem;color:var(--text-light);}
+.img-ctrl{flex:1;min-width:200px;display:flex;flex-direction:column;gap:8px;}
+.url-input{padding:10px 14px;border:1px solid var(--blush);background:var(--parchment);font-family:'Jost',sans-serif;font-size:.82rem;font-weight:300;color:var(--charcoal);outline:none;transition:border-color .3s;width:100%;}
+.url-input:focus{border-color:var(--gold);background:var(--white);}
+.upload-lbl{display:inline-flex;align-items:center;gap:8px;padding:9px 18px;background:var(--gold-pale);border:1px solid var(--blush);cursor:pointer;font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:var(--warm-brown);transition:all .25s;font-family:'Jost',sans-serif;}
+.upload-lbl:hover{background:var(--gold);color:var(--white);border-color:var(--gold);}
+.upload-file{display:none;}
+.img-note{font-size:.7rem;color:var(--text-light);line-height:1.6;}
+.prog-bar{display:none;margin-top:6px;}
+.prog-inner{height:3px;background:var(--parchment);}
+.prog-fill{height:100%;background:var(--gold);transition:width .3s;width:0%;}
+.btn-save{padding:13px 36px;background:var(--gold);color:var(--white);border:none;font-family:'Jost',sans-serif;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .3s;}
+.btn-save:hover{background:var(--warm-brown);}
+.btn-sec{padding:13px 28px;background:transparent;border:1px solid var(--blush);font-family:'Jost',sans-serif;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;color:var(--text-mid);transition:all .3s;}
+.btn-sec:hover{border-color:var(--charcoal);color:var(--charcoal);}
+.btn-dng{padding:13px 28px;background:transparent;border:1px solid #fca5a5;font-family:'Jost',sans-serif;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;color:var(--danger);transition:all .3s;}
+.btn-dng:hover{background:var(--danger);color:var(--white);}
+.btn-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:8px;}
+.cake-tbl{width:100%;border-collapse:collapse;}
+.cake-tbl th{text-align:left;padding:10px 14px;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-light);font-weight:400;border-bottom:1px solid var(--blush);}
+.cake-tbl td{padding:13px 14px;border-bottom:1px solid var(--parchment);vertical-align:middle;}
+.cake-tbl tr:hover td{background:var(--parchment);}
+.tthumb{width:54px;height:42px;object-fit:cover;display:block;}
+.tthumb-ph{width:54px;height:42px;background:var(--blush);display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+.tname{font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--charcoal);}
+.tcat{display:inline-block;padding:3px 10px;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;background:var(--gold-pale);color:var(--warm-brown);}
+.t-acts{display:flex;gap:6px;}
+.tbtn{padding:6px 12px;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;border:none;font-family:'Jost',sans-serif;transition:all .2s;}
+.t-edit{background:var(--gold-pale);color:var(--warm-brown);}
+.t-edit:hover{background:var(--gold);color:var(--white);}
+.t-del{background:#fdecea;color:var(--danger);}
+.t-del:hover{background:var(--danger);color:var(--white);}
+.empty-row{text-align:center;padding:48px;color:var(--text-light);}
+.tab-row{display:flex;border-bottom:1px solid var(--blush);margin-bottom:24px;}
+.ptab{padding:11px 22px;font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;border:none;background:none;color:var(--text-mid);font-family:'Jost',sans-serif;font-weight:300;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .25s;}
+.ptab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.svc-card{background:var(--parchment);border:1px solid var(--blush);padding:20px 24px;margin-bottom:14px;}
+.svc-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.svc-name{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--charcoal);}
+.ci-row{display:grid;grid-template-columns:130px 1fr 36px;gap:10px;align-items:center;padding:11px 14px;background:var(--parchment);border:1px solid var(--blush);margin-bottom:10px;}
+.ci-lbl{font-size:.68rem;color:var(--text-mid);letter-spacing:.1em;text-transform:uppercase;}
+.ci-del{background:none;border:none;cursor:pointer;color:var(--text-light);font-size:1.1rem;transition:color .2s;padding:4px;text-align:center;}
+.ci-del:hover{color:var(--danger);}
+.q-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;background:var(--parchment);border:1px solid var(--blush);font-size:.82rem;margin:4px;}
+.q-chip button{background:none;border:none;cursor:pointer;color:var(--text-light);font-size:1rem;transition:color .2s;line-height:1;}
+.q-chip button:hover{color:var(--danger);}
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
+.dash-tile{padding:20px;background:var(--parchment);cursor:pointer;border:1px solid var(--blush);transition:all .25s;}
+.dash-tile:hover{border-color:var(--gold);background:var(--gold-pale);}
+.dash-icon{font-size:1.6rem;margin-bottom:8px;}
+.dash-name{font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--charcoal);}
+.dash-hint{font-size:.72rem;color:var(--text-light);margin-top:3px;}
+.toast{position:fixed;bottom:28px;right:28px;z-index:9999;padding:14px 22px;font-size:.82rem;font-family:'Jost',sans-serif;color:var(--white);display:flex;align-items:center;gap:10px;transform:translateY(80px);opacity:0;transition:all .4s cubic-bezier(.22,1,.36,1);box-shadow:0 8px 30px rgba(0,0,0,.2);}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{background:var(--success);}
+.toast.error{background:var(--danger);}
+.toast.info{background:var(--gold);}
+@media(max-width:900px){.sidebar{width:100%;height:auto;position:relative;}.main{margin-left:0;padding:24px;}.stats-row{grid-template-columns:1fr 1fr;}.fgrid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">Maison Azerwal</div>
+    <div class="login-sub">Espace Administrateur</div>
+    <label class="login-lbl">Mot de passe</label>
+    <input type="password" class="login-input" id="loginPwd" placeholder="Entrez votre mot de passe" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Accéder au Panneau Admin</button>
+    <div class="login-err" id="loginErr"></div>
+    <div class="login-hint">🔑 Mot de passe par défaut : <strong>azerwal2024</strong></div>
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="adminApp">
+  <nav class="sidebar">
+    <div class="sidebar-logo">Maison Azerwal<span>Panneau Admin</span></div>
+    <div class="nav-grp">Portfolio</div>
+    <button class="nav-item active" onclick="showPage('dashboard')" id="nav-dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Tableau de bord</button>
+    <button class="nav-item" onclick="showPage('gallery')" id="nav-gallery">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Gâteaux & Portfolio</button>
+    <div class="nav-grp">Contenu du Site</div>
+    <button class="nav-item" onclick="showPage('hero')" id="nav-hero">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>Page d'accueil</button>
+    <button class="nav-item" onclick="showPage('about')" id="nav-about">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>À Propos</button>
+    <button class="nav-item" onclick="showPage('services')" id="nav-services">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Services & Tarifs</button>
+    <button class="nav-item" onclick="showPage('contact')" id="nav-contact">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Contact & Coordonnées</button>
+    <button class="nav-item" onclick="showPage('instagram')" id="nav-instagram">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>Instagram</button>
+    <div class="nav-grp">Système</div>
+    <button class="nav-item" onclick="showPage('settings')" id="nav-settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Paramètres</button>
+    <div class="sidebar-foot">
+      <a href="index.html" target="_blank" class="view-site">
+        <svg viewBox="0 0 24 24" width="13" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>Voir le site public</a>
+      <button class="logout-btn" onclick="doLogout()">
+        <svg viewBox="0 0 24 24" width="13" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>Déconnexion</button>
+    </div>
+  </nav>
+
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <div id="page-dashboard">
+      <div class="page-hdr">
+        <div><h1 class="page-title">Tableau de <em>Bord</em></h1><p class="page-sub">Vue d'ensemble de votre site Maison Azerwal</p></div>
+        <a href="index.html" target="_blank" class="btn-save" style="text-decoration:none;">👁 Voir le site →</a>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-num" id="statTotal">0</div><div class="stat-lbl">Créations</div></div>
+        <div class="stat-card"><div class="stat-num" id="statMariage">0</div><div class="stat-lbl">Mariages</div></div>
+        <div class="stat-card"><div class="stat-num" id="statAnniv">0</div><div class="stat-lbl">Anniversaires</div></div>
+        <div class="stat-card"><div class="stat-num" id="statCustom">0</div><div class="stat-lbl">Créations Uniques</div></div>
+      </div>
+      <div class="ecard">
+        <div class="ecard-title">🛠️ Sections à modifier</div>
+        <div class="dash-grid">
+          <div class="dash-tile" onclick="showPage('hero')"><div class="dash-icon">🏠</div><div class="dash-name">Page d'accueil</div><div class="dash-hint">Titre, tagline, image</div></div>
+          <div class="dash-tile" onclick="showPage('gallery')"><div class="dash-icon">🎂</div><div class="dash-name">Portfolio</div><div class="dash-hint">Ajouter, modifier, supprimer</div></div>
+          <div class="dash-tile" onclick="showPage('about')"><div class="dash-icon">👤</div><div class="dash-name">À Propos</div><div class="dash-hint">Bio, photo, signature</div></div>
+          <div class="dash-tile" onclick="showPage('services')"><div class="dash-icon">⭐</div><div class="dash-name">Services</div><div class="dash-hint">Offres et tarifs</div></div>
+          <div class="dash-tile" onclick="showPage('contact')"><div class="dash-icon">✉️</div><div class="dash-name">Contact</div><div class="dash-hint">Email, tél, adresse</div></div>
+          <div class="dash-tile" onclick="showPage('instagram')"><div class="dash-icon">📸</div><div class="dash-name">Instagram</div><div class="dash-hint">Photos et handle</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GALLERY -->
+    <div id="page-gallery" style="display:none">
+      <div class="page-hdr">
+        <div><h1 class="page-title">Gâteaux & <em>Portfolio</em></h1><p class="page-sub">Gérez toutes vos créations</p></div>
+        <button class="btn-save" onclick="openAddCake()">+ Ajouter une création</button>
+      </div>
+      <div class="ecard" id="cakeFormCard" style="display:none">
+        <div class="ecard-title">🎂 <span id="cakeFormTitle">Nouvelle Création</span></div>
+        <div class="fgrid">
+          <div class="fg"><label class="fl">Nom *</label><input type="text" class="fi" id="cf-name" placeholder="ex: La Croquembouche Royale"></div>
+          <div class="fg"><label class="fl">Catégorie</label>
+            <select class="fi" id="cf-cat"><option value="mariage">Mariage</option><option value="anniversaire">Anniversaire</option><option value="custom">Création Unique</option></select>
+          </div>
+          <div class="fg full"><label class="fl">Description</label><textarea class="fi" id="cf-desc" style="height:80px;" placeholder="Décrivez cette création..."></textarea></div>
+          <div class="fg full">
+            <label class="fl">Image</label>
+            <div class="img-row">
+              <div class="img-box" id="cf-img-box" style="width:140px;height:100px;"><div class="img-ph">🎂</div></div>
+              <div class="img-ctrl">
+                <input type="text" class="url-input" id="cf-img" placeholder="https://... URL de l'image" oninput="previewImg('cf-img','cf-img-box')">
+                <label class="upload-lbl">📤 Uploader depuis l'ordinateur<input type="file" class="upload-file" accept="image/*" onchange="handleUpload(this,'cf-img','cf-img-box')"></label>
+                <div class="prog-bar" id="cf-prog"><div class="prog-inner"><div class="prog-fill" id="cf-prog-fill"></div></div></div>
+                <div class="img-note">ou collez une URL directe (imgbb, Unsplash, Cloudinary…)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <input type="hidden" id="cf-id">
+        <div class="btn-row" style="margin-top:22px;">
+          <button class="btn-save" id="cf-save-btn" onclick="saveCakeForm()">✨ Enregistrer</button>
+          <button class="btn-sec" onclick="closeCakeForm()">Annuler</button>
+        </div>
+      </div>
+      <div class="tab-row">
+        <button class="ptab active" onclick="filterGal('all',this)">Tous</button>
+        <button class="ptab" onclick="filterGal('mariage',this)">Mariages</button>
+        <button class="ptab" onclick="filterGal('anniversaire',this)">Anniversaires</button>
+        <button class="ptab" onclick="filterGal('custom',this)">Créations Uniques</button>
+      </div>
+      <div class="ecard" style="padding:0;overflow:hidden;">
+        <table class="cake-tbl">
+          <thead><tr><th style="width:66px">Photo</th><th>Nom</th><th>Catégorie</th><th>Description</th><th style="width:150px">Actions</th></tr></thead>
+          <tbody id="galTbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- HERO -->
+    <div id="page-hero" style="display:none">
+      <div class="page-hdr"><div><h1 class="page-title">Page d'accueil <em>(Hero)</em></h1><p class="page-sub">Ce que les visiteurs voient en premier</p></div></div>
+      <div class="ecard">
+        <div class="ecard-title">✍️ Textes</div>
+        <div class="fgrid">
+          <div class="fg"><label class="fl">Label doré (eyebrow)</label><input type="text" class="fi" id="h-eyebrow"></div>
+          <div class="fg"><label class="fl">Titre ligne 1</label><input type="text" class="fi" id="h-t1"></div>
+          <div class="fg"><label class="fl">Titre ligne 2 (italique)</label><input type="text" class="fi" id="h-t2"></div>
+          <div class="fg"><label class="fl">Tagline (cursive dorée)</label><input type="text" class="fi" id="h-tagline"></div>
+          <div class="fg full"><label class="fl">Description</label><textarea class="fi" id="h-desc" style="height:80px;"></textarea></div>
+          <div class="fg"><label class="fl">Bouton principal</label><input type="text" class="fi" id="h-btn1"></div>
+          <div class="fg"><label class="fl">Bouton secondaire</label><input type="text" class="fi" id="h-btn2"></div>
+        </div>
+      </div>
+      <div class="ecard">
+        <div class="ecard-title">🖼️ Image principale (orbe)</div>
+        <div class="img-row">
+          <div class="img-box" id="h-img-box" style="width:160px;height:110px;"><div class="img-ph">🎂</div></div>
+          <div class="img-ctrl">
+            <input type="text" class="url-input" id="h-img" placeholder="URL de l'image hero" oninput="previewImg('h-img','h-img-box')">
+            <label class="upload-lbl">📤 Uploader depuis l'ordinateur<input type="file" class="upload-file" accept="image/*" onchange="handleUpload(this,'h-img','h-img-box')"></label>
+            <div class="prog-bar" id="h-prog"><div class="prog-inner"><div class="prog-fill" id="h-prog-fill"></div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="btn-row"><button class="btn-save" onclick="saveHero()">💾 Sauvegarder la page d'accueil</button></div>
+    </div>
+
+    <!-- ABOUT -->
+    <div id="page-about" style="display:none">
+      <div class="page-hdr"><div><h1 class="page-title">Section <em>À Propos</em></h1><p class="page-sub">Votre histoire et présentation</p></div></div>
+      <div class="ecard">
+        <div class="ecard-title">✍️ Textes</div>
+        <div class="fgrid">
+          <div class="fg"><label class="fl">Titre (ex: Passion)</label><input type="text" class="fi" id="ab-t1"></div>
+          <div class="fg"><label class="fl">Titre italique (ex: & Savoir-Faire)</label><input type="text" class="fi" id="ab-t2"></div>
+          <div class="fg full"><label class="fl">Paragraphe 1</label><textarea class="fi" style="height:90px;" id="ab-p1"></textarea></div>
+          <div class="fg full"><label class="fl">Paragraphe 2</label><textarea class="fi" style="height:90px;" id="ab-p2"></textarea></div>
+          <div class="fg"><label class="fl">Votre nom (signature cursive)</label><input type="text" class="fi" id="ab-sig"></div>
+          <div class="fg"><label class="fl">Années d'expérience (badge)</label><input type="text" class="fi" id="ab-yrs" placeholder="12+"></div>
+        </div>
+      </div>
+      <div class="ecard">
+        <div class="ecard-title">📷 Photo portrait</div>
+        <div class="img-row">
+          <div class="img-box" id="ab-img-box" style="width:110px;height:150px;"><div class="img-ph">👤</div></div>
+          <div class="img-ctrl">
+            <input type="text" class="url-input" id="ab-img" placeholder="URL de votre photo portrait" oninput="previewImg('ab-img','ab-img-box')">
+            <label class="upload-lbl">📤 Uploader depuis l'ordinateur<input type="file" class="upload-file" accept="image/*" onchange="handleUpload(this,'ab-img','ab-img-box')"></label>
+            <div class="prog-bar" id="ab-prog"><div class="prog-inner"><div class="prog-fill" id="ab-prog-fill"></div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="ecard">
+        <div class="ecard-title">✨ Qualités / Badges</div>
+        <div id="qList" style="margin-bottom:14px;display:flex;flex-wrap:wrap;gap:8px;"></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+          <input type="text" class="fi" id="q-icon" placeholder="🏅" style="width:70px;">
+          <input type="text" class="fi" id="q-lbl" placeholder="Label (ex: Artisan Certifié)" style="width:220px;">
+          <button class="btn-sec" onclick="addQuality()">+ Ajouter</button>
+        </div>
+      </div>
+      <div class="btn-row"><button class="btn-save" onclick="saveAbout()">💾 Sauvegarder À Propos</button></div>
+    </div>
+
+    <!-- SERVICES -->
+    <div id="page-services" style="display:none">
+      <div class="page-hdr"><div><h1 class="page-title">Services & <em>Tarifs</em></h1><p class="page-sub">Vos offres et prestations</p></div></div>
+      <div class="ecard">
+        <div class="ecard-title">✍️ En-tête de la section</div>
+        <div class="fgrid">
+          <div class="fg"><label class="fl">Titre (ex: Nos)</label><input type="text" class="fi" id="sv-t1"></div>
+          <div class="fg"><label class="fl">Titre italique (ex: Prestations)</label><input type="text" class="fi" id="sv-t2"></div>
+          <div class="fg full"><label class="fl">Sous-titre</label><textarea class="fi" id="sv-sub" style="height:70px;"></textarea></div>
+        </div>
+      </div>
+      <div class="ecard">
+        <div class="ecard-title">⭐ Cartes de services</div>
+        <div id="svcList"></div>
+        <button class="btn-sec" onclick="addService()" style="margin-top:8px;">+ Ajouter un service</button>
+      </div>
+      <div class="btn-row"><button class="btn-save" onclick="saveServices()">💾 Sauvegarder les Services</button></div>
+    </div>
+
+    <!-- CONTACT -->
+    <div id="page-contact" style="display:none">
+      <div class="page-hdr"><div><h1 class="page-title">Contact & <em>Informations</em></h1><p class="page-sub">Vos coordonnées et réseaux sociaux</p></div></div>
+      <div class="ecard">
+        <div class="ecard-title">✍️ Textes</div>
+        <div class="fgrid">
+          <div class="fg"><label class="fl">Titre (ex: Votre)</label><input type="text" class="fi" id="ct-t1"></div>
+          <div class="fg"><label class="fl">Titre italique (ex: Projet)</label><input type="text" class="fi" id="ct-t2"></div>
+          <div class="fg full"><label class="fl">Texte introductif</label><textarea class="fi" id="ct-desc" style="height:80px;"></textarea></div>
+          <div class="fg"><label class="fl">Titre du formulaire</label><input type="text" class="fi" id="ct-ftitle"></div>
+          <div class="fg"><label class="fl">Message de confirmation</label><input type="text" class="fi" id="ct-fmsg"></div>
+        </div>
+      </div>
+      <div class="ecard">
+        <div class="ecard-title">📋 Coordonnées</div>
+        <div id="ctItems"></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:4px;">
+          <input type="text" class="fi" id="ct-new-lbl" placeholder="Label (ex: Email)" style="width:140px;">
+          <input type="text" class="fi" id="ct-new-val" placeholder="Valeur (ex: contact@...)" style="flex:1;min-width:180px;">
+          <button class="btn-sec" onclick="addContactItem()">+ Ajouter</button>
+        </div>
+      </div>
+      <div class="ecard">
+        <div class="ecard-title">🔗 Réseaux sociaux</div>
+        <div class="fgrid">
+          <div class="fg"><label class="fl">Instagram URL</label><input type="text" class="fi" id="s-ig" placeholder="https://www.instagram.com/..."></div>
+          <div class="fg"><label class="fl">Facebook URL</label><input type="text" class="fi" id="s-fb" placeholder="https://www.facebook.com/..."></div>
+          <div class="fg"><label class="fl">Pinterest URL</label><input type="text" class="fi" id="s-pt" placeholder="https://www.pinterest.com/..."></div>
+          <div class="fg"><label class="fl">TikTok URL</label><input type="text" class="fi" id="s-tt" placeholder="https://www.tiktok.com/@..."></div>
+        </div>
+      </div>
+      <div class="btn-row"><button class="btn-save" onclick="saveContact()">💾 Sauvegarder Contact</button></div>
+    </div>
+
+    <!-- INSTAGRAM -->
+    <div id="page-instagram" style="display:none">
+      <div class="page-hdr"><div><h1 class="page-title">Section <em>Instagram</em></h1><p class="page-sub">Vos photos et lien de profil</p></div></div>
+      <div class="ecard">
+        <div class="ecard-title">📸 Paramètres</div>
+        <div class="fgrid">
+          <div class="fg"><label class="fl">Handle (sans @)</label><input type="text" class="fi" id="ig-handle" placeholder="abdo.azerwal"></div>
+          <div class="fg"><label class="fl">URL du profil</label><input type="text" class="fi" id="ig-url" placeholder="https://www.instagram.com/..."></div>
+          <div class="fg full"><label class="fl">Texte du bouton</label><input type="text" class="fi" id="ig-btn" placeholder="Suivre sur Instagram"></div>
+        </div>
+      </div>
+      <div class="ecard">
+        <div class="ecard-title">🖼️ Photos de la grille (6 photos affichées)</div>
+        <div id="igList" style="display:flex;flex-direction:column;gap:12px;margin-bottom:18px;"></div>
+        <div style="background:var(--gold-pale);border-left:3px solid var(--gold);padding:14px 18px;font-size:.78rem;color:var(--warm-brown);">
+          💡 Uploadez vos vraies photos Instagram ou collez leurs URLs directes depuis imgbb.com ou Cloudinary.
+        </div>
+      </div>
+      <div class="btn-row"><button class="btn-save" onclick="saveInstagram()">💾 Sauvegarder Instagram</button></div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="page-settings" style="display:none">
+      <div class="page-hdr"><div><h1 class="page-title"><em>Paramètres</em></h1><p class="page-sub">Sécurité, Cloudinary et données</p></div></div>
+      <div class="ecard">
+        <div class="ecard-title">🔐 Mot de passe</div>
+        <div class="fgrid">
+          <div class="fg"><label class="fl">Nouveau mot de passe</label><input type="password" class="fi" id="newPwd" placeholder="Minimum 6 caractères"></div>
+          <div class="fg"><label class="fl">Confirmer</label><input type="password" class="fi" id="cfmPwd" placeholder="Répétez"></div>
+        </div>
+        <div class="btn-row" style="margin-top:16px;"><button class="btn-save" onclick="changePwd()">Changer le mot de passe</button></div>
+      </div>
+      <div class="ecard">
+        <div class="ecard-title">☁️ Cloudinary (pour uploader vos vraies photos)</div>
+        <div class="fgrid">
+          <div class="fg"><label class="fl">Cloud Name</label><input type="text" class="fi" id="cl-name" placeholder="ex: dxxxxxx"></div>
+          <div class="fg"><label class="fl">Upload Preset (non signé)</label><input type="text" class="fi" id="cl-preset" placeholder="ex: patisserie_upload"></div>
+        </div>
+        <p style="font-size:.75rem;color:var(--text-light);margin-top:12px;line-height:1.7;">Créez un compte gratuit sur <strong>cloudinary.com</strong> → Settings → Upload → Add preset → Unsigned. Vous obtenez 25 GB gratuits.</p>
+        <div class="btn-row" style="margin-top:16px;"><button class="btn-save" onclick="saveCloudinary()">💾 Sauvegarder Cloudinary</button></div>
+      </div>
+      <div class="ecard">
+        <div class="ecard-title">💾 Sauvegarde</div>
+        <div class="btn-row">
+          <button class="btn-save" onclick="exportAll()">📥 Exporter tout (JSON)</button>
+          <button class="btn-sec" onclick="document.getElementById('impFile').click()">📤 Importer JSON</button>
+          <button class="btn-dng" onclick="resetAll()">🗑️ Tout réinitialiser</button>
+        </div>
+        <input type="file" id="impFile" accept=".json" style="display:none" onchange="importAll(this)">
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── AUTH ──
+let ADMIN_PWD = localStorage.getItem('adminPwd')||'azerwal2024';
+function doLogin(){
+  const v=document.getElementById('loginPwd').value, i=document.getElementById('loginPwd');
+  if(v===ADMIN_PWD){document.getElementById('loginScreen').style.display='none';document.getElementById('adminApp').style.display='block';initAdmin();}
+  else{document.getElementById('loginErr').textContent='❌ Mot de passe incorrect';i.classList.remove('shake');void i.offsetWidth;i.classList.add('shake');i.value='';setTimeout(()=>{i.classList.remove('shake');document.getElementById('loginErr').textContent='';},1500);}
+}
+document.getElementById('loginPwd').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+function doLogout(){document.getElementById('loginScreen').style.display='flex';document.getElementById('adminApp').style.display='none';document.getElementById('loginPwd').value='';}
+function changePwd(){
+  const np=document.getElementById('newPwd').value,cp=document.getElementById('cfmPwd').value;
+  if(np.length<6){showToast('Minimum 6 caractères','error');return;}
+  if(np!==cp){showToast('Les mots de passe ne correspondent pas','error');return;}
+  ADMIN_PWD=np;localStorage.setItem('adminPwd',np);
+  document.getElementById('newPwd').value='';document.getElementById('cfmPwd').value='';
+  showToast('✅ Mot de passe mis à jour !','success');
+}
+
+// ── KEYS & DEFAULTS ──
+const K={cakes:'maison_azerwal_cakes',hero:'maison_azerwal_hero',about:'maison_azerwal_about',services:'maison_azerwal_services',contact:'maison_azerwal_contact',instagram:'maison_azerwal_instagram',cloud:'cloudinaryCfg'};
+const D={
+  cakes:[
+    {id:1,name:'La Grande Croquembouche',cat:'mariage',desc:"Une pièce montée de 120 choux à la crème vanille, ornée de fils de caramel dorés et de fleurs en sucre soufflé.",img:'https://images.unsplash.com/photo-1535254973040-607b474cb50d?auto=format&w=600&q=80'},
+    {id:2,name:'Rose Élégance',cat:'mariage',desc:'Wedding cake 5 étages recouvert de fondant satiné ivoire, couronné de roses en sucre modelées à la main.',img:'https://images.unsplash.com/photo-1567880905822-56f8e06fe630?auto=format&w=600&q=80'},
+    {id:3,name:'Jardin Enchanté',cat:'mariage',desc:'Semi naked cake orné de fleurs fraîches et fruits exotiques, pour un mariage bohème et poétique.',img:'https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&w=600&q=80'},
+    {id:4,name:'Anniversaire Doré',cat:'anniversaire',desc:'Layer cake 4 étages, ganache chocolat intense et miroir or.',img:'https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&w=600&q=80'},
+    {id:5,name:'Fleurs de Printemps',cat:'anniversaire',desc:'Fraisier revisité avec une couronne de fleurs des champs en pâte à sucre.',img:'https://images.unsplash.com/photo-1571115177098-24ec42ed204d?auto=format&w=600&q=80'},
+    {id:6,name:'Luxe & Velours',cat:'anniversaire',desc:"Red velvet cake enrobé d'un glaçage velours bordeaux.",img:'https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&w=600&q=80'},
+    {id:7,name:'Sculpture Baroque',cat:'custom',desc:"Pièce montée architecturale inspirée du baroque français.",img:'https://images.unsplash.com/photo-1486427944299-d1955d23e34d?auto=format&w=600&q=80'},
+    {id:8,name:'Jardin Japonais',cat:'custom',desc:'Création fusion inspirée des cerisiers en fleurs.',img:'https://images.unsplash.com/photo-1542826438-bd32f43d626f?auto=format&w=600&q=80'},
+    {id:9,name:'Tour Féerique',cat:'custom',desc:'Structure de 7 éléments pour une cérémonie de baptême.',img:'https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&w=600&q=80'},
+  ],
+  hero:{eyebrow:"Pâtisserie d'Art Nuptiale",title1:"L'Art Sucré",title2:"à son Apogée",tagline:"Edible Art for Life's Sweetest Moments",desc:"Chaque gâteau est une œuvre unique, pensée pour sublimer vos célébrations les plus précieuses — mariages, anniversaires, et événements d'exception.",btn1:"Découvrir le Portfolio",btn2:"Demander un devis",img:"https://images.unsplash.com/photo-1535254973040-607b474cb50d?auto=format&w=600&q=80"},
+  about:{title1:"Passion",title2:"& Savoir-Faire",p1:"Né d'une passion dévorante pour la pâtisserie française et l'art floral, Abdo Azerwal a développé un style unique qui marie la tradition classique aux tendances contemporaines.",p2:"Chaque création est pensée comme une œuvre d'art comestible — des croquembouches monumentales aux layer cakes délicatement ornés, chaque gâteau raconte une histoire et crée un souvenir inoubliable.",signature:"Abdo Azerwal",years:"12+",img:"https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&w=600&q=80",qualities:[{icon:"🏅",label:"Artisan Certifié"},{icon:"🌸",label:"Ingrédients Bio"},{icon:"✨",label:"Sur Mesure"},{icon:"🚚",label:"Livraison Incluse"}]},
+  services:{title1:"Nos",title2:"Prestations",subtitle:"De la consultation initiale à la livraison, nous accompagnons chaque couple et famille pour créer le gâteau de leurs rêves.",items:[{icon:"💍",name:"Gâteaux de Mariage",desc:"Croquembouches monumentales, wedding cakes à plusieurs étages — conçus pour magnifier votre journée la plus importante.",price:"À partir de 450€"},{icon:"🎂",name:"Gâteaux d'Anniversaire",desc:"Des layer cakes artistiques aux naked cakes champêtres, chaque anniversaire mérite une pièce unique et mémorable.",price:"À partir de 120€"},{icon:"⭐",name:"Créations Sur Mesure",desc:"Baptêmes, fiançailles, fêtes d'entreprise — nous créons des pièces montées adaptées à chaque événement exceptionnel.",price:"Devis personnalisé"},{icon:"🫖",name:"Consultation & Design",desc:"Un rendez-vous dédié pour définir votre vision, choisir les saveurs et concevoir le gâteau parfait ensemble.",price:"Consultation offerte"}]},
+  contact:{title1:"Votre",title2:"Projet",desc:"Chaque grand moment mérite un gâteau extraordinaire. Partagez votre vision et nous créerons ensemble une pièce inoubliable pour votre célébration.",formTitle:"Demande de Devis",successMsg:"✨ Merci pour votre message ! Nous vous répondrons sous 24 heures.",items:[{label:"Email",val:"contact@maisonazerwal.fr"},{label:"Téléphone",val:"+33 (0)6 XX XX XX XX"},{label:"Atelier",val:"Paris & Île-de-France — Livraison France entière"}],socials:{instagram:"https://www.instagram.com/abdo.azerwal/",facebook:"#",pinterest:"#",tiktok:""}},
+  instagram:{handle:"abdo.azerwal",url:"https://www.instagram.com/abdo.azerwal/",btnText:"Suivre sur Instagram",photos:[{img:"https://images.unsplash.com/photo-1535254973040-607b474cb50d?auto=format&w=400&q=80",alt:"Croquembouche"},{img:"https://images.unsplash.com/photo-1567880905822-56f8e06fe630?auto=format&w=400&q=80",alt:"Wedding Cake"},{img:"https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&w=400&q=80",alt:"Gâteau fleurs"},{img:"https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&w=400&q=80",alt:"Cake doré"},{img:"https://images.unsplash.com/photo-1571115177098-24ec42ed204d?auto=format&w=400&q=80",alt:"Fleurs printemps"},{img:"https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&w=400&q=80",alt:"Layer cake"}]}
+};
+function ld(k){try{const r=localStorage.getItem(k);return r?JSON.parse(r):null;}catch{return null;}}
+function sv(k,v){localStorage.setItem(k,JSON.stringify(v));}
+function gd(key){return ld(K[key])||JSON.parse(JSON.stringify(D[key]));}
+let cloudCfg=ld(K.cloud)||{};
+
+// ── NAVIGATION ──
+const PAGES=['dashboard','gallery','hero','about','services','contact','instagram','settings'];
+function showPage(n){
+  PAGES.forEach(p=>{document.getElementById('page-'+p).style.display=p===n?'block':'none';const el=document.getElementById('nav-'+p);if(el)el.classList.toggle('active',p===n);});
+  if(n==='gallery')   renderGal();
+  if(n==='hero')      loadHero();
+  if(n==='about')     loadAbout();
+  if(n==='services')  loadServices();
+  if(n==='contact')   loadContact();
+  if(n==='instagram') loadInstagram();
+  if(n==='settings')  loadSettings();
+  window.scrollTo(0,0);
+}
+
+// ── IMAGE HELPERS ──
+function previewImg(inId,boxId){setBox(boxId,document.getElementById(inId).value.trim());}
+function setBox(id,url){
+  const b=document.getElementById(id);if(!b)return;
+  b.innerHTML=url?`<img src="${url}" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.parentElement.innerHTML='<div class=img-ph>⚠️</div>'">`:'<div class="img-ph">🖼️</div>';
+}
+async function handleUpload(fi,inId,boxId){
+  const file=fi.files[0];if(!file)return;
+  // Instant local preview
+  const r=new FileReader();
+  r.onload=e=>setBox(boxId,e.target.result);
+  r.readAsDataURL(file);
+  if(!cloudCfg.cloudName||!cloudCfg.uploadPreset){
+    // Base64 fallback
+    const r2=new FileReader();
+    r2.onload=e=>{document.getElementById(inId).value=e.target.result;showToast('✅ Image chargée (configurez Cloudinary pour des URLs permanentes)','info');};
+    r2.readAsDataURL(file);return;
+  }
+  // Cloudinary
+  const fd=new FormData();fd.append('file',file);fd.append('upload_preset',cloudCfg.uploadPreset);
+  const xhr=new XMLHttpRequest();
+  xhr.onload=()=>{try{const res=JSON.parse(xhr.responseText);if(res.secure_url){document.getElementById(inId).value=res.secure_url;setBox(boxId,res.secure_url);showToast('✅ Image uploadée sur Cloudinary !','success');}}catch{showToast('Erreur upload','error');}};
+  xhr.onerror=()=>showToast('Erreur réseau','error');
+  xhr.open('POST',`https://api.cloudinary.com/v1_1/${cloudCfg.cloudName}/image/upload`);xhr.send(fd);
+}
+
+// ── GALLERY ──
+const CAT={mariage:'Mariage',anniversaire:'Anniversaire',custom:'Création Unique'};
+let galFilter='all',editId=null;
+function renderGal(){
+  let cakes=gd('cakes');if(galFilter!=='all')cakes=cakes.filter(c=>c.cat===galFilter);
+  const tb=document.getElementById('galTbody');
+  if(!cakes.length){tb.innerHTML=`<tr><td colspan="5" class="empty-row">Aucune création dans cette catégorie</td></tr>`;return;}
+  tb.innerHTML=cakes.map(c=>`<tr>
+    <td>${c.img?`<img src="${c.img}" class="tthumb" onerror="this.style.display='none'">`:'<div class="tthumb-ph">🎂</div>'}</td>
+    <td><div class="tname">${c.name}</div></td>
+    <td><span class="tcat">${CAT[c.cat]||c.cat}</span></td>
+    <td style="font-size:.82rem;color:var(--text-mid);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.desc}</td>
+    <td><div class="t-acts"><button class="tbtn t-edit" onclick="openEdit(${c.id})">Modifier</button><button class="tbtn t-del" onclick="delCake(${c.id})">Supprimer</button></div></td>
+  </tr>`).join('');
+}
+function filterGal(f,btn){galFilter=f;document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderGal();}
+function openAddCake(){
+  editId=null;document.getElementById('cakeFormTitle').textContent='Nouvelle Création';document.getElementById('cf-save-btn').textContent='✨ Ajouter';
+  ['cf-name','cf-img'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('cf-desc').value='';document.getElementById('cf-cat').value='mariage';document.getElementById('cf-id').value='';
+  setBox('cf-img-box','');document.getElementById('cakeFormCard').style.display='block';document.getElementById('cakeFormCard').scrollIntoView({behavior:'smooth'});
+}
+function openEdit(id){
+  const c=gd('cakes').find(x=>x.id===id);if(!c)return;
+  editId=id;document.getElementById('cakeFormTitle').textContent='Modifier la Création';document.getElementById('cf-save-btn').textContent='💾 Mettre à jour';
+  document.getElementById('cf-name').value=c.name;document.getElementById('cf-cat').value=c.cat;document.getElementById('cf-desc').value=c.desc;document.getElementById('cf-img').value=c.img||'';document.getElementById('cf-id').value=id;
+  setBox('cf-img-box',c.img||'');document.getElementById('cakeFormCard').style.display='block';document.getElementById('cakeFormCard').scrollIntoView({behavior:'smooth'});
+}
+function closeCakeForm(){document.getElementById('cakeFormCard').style.display='none';editId=null;}
+function saveCakeForm(){
+  const name=document.getElementById('cf-name').value.trim(),cat=document.getElementById('cf-cat').value,desc=document.getElementById('cf-desc').value.trim(),img=document.getElementById('cf-img').value.trim();
+  if(!name){showToast('Le nom est requis','error');return;}
+  let cakes=gd('cakes');
+  if(editId){const i=cakes.findIndex(c=>c.id===editId);if(i>-1)cakes[i]={...cakes[i],name,cat,desc,img};showToast('✅ Mis à jour !','success');}
+  else{cakes.push({id:Date.now(),name,cat,desc:desc||'Une création exclusive de Maison Azerwal.',img});showToast('✅ Ajouté au portfolio !','success');}
+  sv(K.cakes,cakes);closeCakeForm();renderGal();updateStats();
+}
+function delCake(id){
+  if(!confirm('Supprimer cette création ?'))return;
+  sv(K.cakes,gd('cakes').filter(c=>c.id!==id));renderGal();updateStats();showToast('🗑️ Supprimé','info');
+}
+
+// ── HERO ──
+function loadHero(){
+  const d=gd('hero');
+  document.getElementById('h-eyebrow').value=d.eyebrow||'';document.getElementById('h-t1').value=d.title1||'';document.getElementById('h-t2').value=d.title2||'';
+  document.getElementById('h-tagline').value=d.tagline||'';document.getElementById('h-desc').value=d.desc||'';
+  document.getElementById('h-btn1').value=d.btn1||'';document.getElementById('h-btn2').value=d.btn2||'';
+  document.getElementById('h-img').value=d.img||'';setBox('h-img-box',d.img||'');
+}
+function saveHero(){
+  sv(K.hero,{eyebrow:v('h-eyebrow'),title1:v('h-t1'),title2:v('h-t2'),tagline:v('h-tagline'),desc:v('h-desc'),btn1:v('h-btn1'),btn2:v('h-btn2'),img:v('h-img')});
+  showToast('✅ Page d\'accueil sauvegardée ! Rechargez votre site.','success');
+}
+
+// ── ABOUT ──
+function loadAbout(){
+  const d=gd('about');
+  document.getElementById('ab-t1').value=d.title1||'';document.getElementById('ab-t2').value=d.title2||'';
+  document.getElementById('ab-p1').value=(d.p1||'').replace(/<[^>]+>/g,'');document.getElementById('ab-p2').value=(d.p2||'').replace(/<[^>]+>/g,'');
+  document.getElementById('ab-sig').value=d.signature||'';document.getElementById('ab-yrs').value=d.years||'';
+  document.getElementById('ab-img').value=d.img||'';setBox('ab-img-box',d.img||'');
+  renderQualities(d.qualities||[]);
+}
+function renderQualities(qs){
+  document.getElementById('qList').innerHTML=qs.map((q,i)=>`<div class="q-chip"><span>${q.icon}</span><span>${q.label}</span><button onclick="rmQuality(${i})">×</button></div>`).join('');
+}
+function addQuality(){
+  const icon=document.getElementById('q-icon').value.trim()||'⭐',lbl=document.getElementById('q-lbl').value.trim();
+  if(!lbl){showToast('Entrez un label','error');return;}
+  const d=gd('about');d.qualities=d.qualities||[];d.qualities.push({icon,label:lbl});sv(K.about,d);
+  document.getElementById('q-icon').value='';document.getElementById('q-lbl').value='';renderQualities(d.qualities);
+}
+function rmQuality(i){const d=gd('about');d.qualities.splice(i,1);sv(K.about,d);renderQualities(d.qualities);}
+function saveAbout(){
+  const d=gd('about');
+  sv(K.about,{...d,title1:v('ab-t1'),title2:v('ab-t2'),p1:v('ab-p1'),p2:v('ab-p2'),signature:v('ab-sig'),years:v('ab-yrs'),img:v('ab-img')});
+  showToast('✅ À Propos sauvegardé ! Rechargez votre site.','success');
+}
+
+// ── SERVICES ──
+function loadServices(){
+  const d=gd('services');
+  document.getElementById('sv-t1').value=d.title1||'';document.getElementById('sv-t2').value=d.title2||'';document.getElementById('sv-sub').value=d.subtitle||'';
+  renderSvcList(d.items||[]);
+}
+function renderSvcList(items){
+  document.getElementById('svcList').innerHTML=items.map((s,i)=>`
+    <div class="svc-card">
+      <div class="svc-hdr"><div class="svc-name">${s.icon} ${s.name}</div><button class="tbtn t-del" onclick="delService(${i})">Supprimer</button></div>
+      <div class="fgrid">
+        <div class="fg"><label class="fl">Icône</label><input type="text" class="fi" value="${s.icon}" oninput="updSvc(${i},'icon',this.value)" style="font-size:1.3rem;"></div>
+        <div class="fg"><label class="fl">Nom</label><input type="text" class="fi" value="${s.name}" oninput="updSvc(${i},'name',this.value)"></div>
+        <div class="fg full"><label class="fl">Description</label><textarea class="fi" oninput="updSvc(${i},'desc',this.value)">${s.desc}</textarea></div>
+        <div class="fg"><label class="fl">Prix / CTA</label><input type="text" class="fi" value="${s.price}" oninput="updSvc(${i},'price',this.value)"></div>
+      </div>
+    </div>`).join('');
+}
+function updSvc(i,f,val){const d=gd('services');if(d.items[i])d.items[i][f]=val;sv(K.services,d);}
+function addService(){const d=gd('services');d.items=d.items||[];d.items.push({icon:'✨',name:'Nouveau Service',desc:'Description...',price:'Sur devis'});sv(K.services,d);renderSvcList(d.items);}
+function delService(i){if(!confirm('Supprimer ce service ?'))return;const d=gd('services');d.items.splice(i,1);sv(K.services,d);renderSvcList(d.items);}
+function saveServices(){
+  const d=gd('services');sv(K.services,{...d,title1:v('sv-t1'),title2:v('sv-t2'),subtitle:v('sv-sub')});
+  showToast('✅ Services sauvegardés ! Rechargez votre site.','success');
+}
+
+// ── CONTACT ──
+function loadContact(){
+  const d=gd('contact');
+  document.getElementById('ct-t1').value=d.title1||'';document.getElementById('ct-t2').value=d.title2||'';
+  document.getElementById('ct-desc').value=d.desc||'';document.getElementById('ct-ftitle').value=d.formTitle||'';document.getElementById('ct-fmsg').value=d.successMsg||'';
+  document.getElementById('s-ig').value=(d.socials&&d.socials.instagram)||'';document.getElementById('s-fb').value=(d.socials&&d.socials.facebook)||'';
+  document.getElementById('s-pt').value=(d.socials&&d.socials.pinterest)||'';document.getElementById('s-tt').value=(d.socials&&d.socials.tiktok)||'';
+  renderCtItems(d.items||[]);
+}
+function renderCtItems(items){
+  document.getElementById('ctItems').innerHTML=items.map((it,i)=>`
+    <div class="ci-row"><div class="ci-lbl">${it.label}</div>
+    <input type="text" class="fi" style="padding:8px 12px;font-size:.85rem;" value="${it.val}" oninput="updCtItem(${i},this.value)">
+    <button class="ci-del" onclick="rmCtItem(${i})">×</button></div>`).join('');
+}
+function updCtItem(i,val){const d=gd('contact');if(d.items[i])d.items[i].val=val;sv(K.contact,d);}
+function addContactItem(){
+  const lbl=document.getElementById('ct-new-lbl').value.trim(),val=document.getElementById('ct-new-val').value.trim();
+  if(!lbl||!val){showToast('Remplissez label et valeur','error');return;}
+  const d=gd('contact');d.items=d.items||[];d.items.push({label:lbl,val});sv(K.contact,d);
+  document.getElementById('ct-new-lbl').value='';document.getElementById('ct-new-val').value='';renderCtItems(d.items);
+}
+function rmCtItem(i){const d=gd('contact');d.items.splice(i,1);sv(K.contact,d);renderCtItems(d.items);}
+function saveContact(){
+  const d=gd('contact');
+  sv(K.contact,{...d,title1:v('ct-t1'),title2:v('ct-t2'),desc:v('ct-desc'),formTitle:v('ct-ftitle'),successMsg:v('ct-fmsg'),socials:{instagram:v('s-ig'),facebook:v('s-fb'),pinterest:v('s-pt'),tiktok:v('s-tt')}});
+  showToast('✅ Contact sauvegardé ! Rechargez votre site.','success');
+}
+
+// ── INSTAGRAM ──
+function loadInstagram(){
+  const d=gd('instagram');
+  document.getElementById('ig-handle').value=d.handle||'';document.getElementById('ig-url').value=d.url||'';document.getElementById('ig-btn').value=d.btnText||'';
+  renderIgList(d.photos||[]);
+}
+function renderIgList(photos){
+  document.getElementById('igList').innerHTML=photos.map((p,i)=>`
+    <div style="display:flex;gap:12px;align-items:center;padding:12px;background:var(--parchment);border:1px solid var(--blush);">
+      <div style="width:64px;height:64px;flex-shrink:0;overflow:hidden;border:1px solid var(--blush);display:flex;align-items:center;justify-content:center;">
+        ${p.img?`<img src="${p.img}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='📸'">`:'<span style="font-size:1.4rem;">📸</span>'}
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:7px;">
+        <input type="text" class="url-input" value="${p.img||''}" placeholder="URL de la photo ${i+1}" oninput="updIg(${i},'img',this.value)">
+        <input type="text" class="url-input" value="${p.alt||''}" placeholder="Description (texte alternatif)" oninput="updIg(${i},'alt',this.value)" style="font-size:.78rem;">
+      </div>
+      <label class="upload-lbl" style="flex-shrink:0;font-size:.65rem;">
+        📤 Upload<input type="file" class="upload-file" accept="image/*" onchange="handleIgUp(this,${i})">
+      </label>
+    </div>`).join('');
+}
+function updIg(i,f,val){const d=gd('instagram');if(d.photos[i])d.photos[i][f]=val;sv(K.instagram,d);}
+function handleIgUp(fi,i){
+  const file=fi.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=e=>{updIg(i,'img',e.target.result);loadInstagram();showToast('✅ Photo chargée','success');};
+  r.readAsDataURL(file);
+}
+function saveInstagram(){
+  const d=gd('instagram');sv(K.instagram,{...d,handle:v('ig-handle'),url:v('ig-url'),btnText:v('ig-btn')});
+  showToast('✅ Instagram sauvegardé ! Rechargez votre site.','success');
+}
+
+// ── SETTINGS ──
+function loadSettings(){
+  const cfg=ld(K.cloud)||{};
+  document.getElementById('cl-name').value=cfg.cloudName||'';document.getElementById('cl-preset').value=cfg.uploadPreset||'';
+}
+function saveCloudinary(){
+  cloudCfg={cloudName:v('cl-name'),uploadPreset:v('cl-preset')};sv(K.cloud,cloudCfg);
+  showToast('✅ Cloudinary sauvegardé !','success');
+}
+function exportAll(){
+  const all={};Object.entries(K).forEach(([k,key])=>{all[k]=ld(key);});
+  const blob=new Blob([JSON.stringify(all,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='maison_azerwal_sauvegarde.json';a.click();
+  showToast('✅ Export réussi !','success');
+}
+function importAll(fi){
+  const file=fi.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=e=>{try{const data=JSON.parse(e.target.result);Object.entries(K).forEach(([k,key])=>{if(data[k])sv(key,data[k]);});initAdmin();showToast('✅ Import réussi !','success');}catch{showToast('❌ Fichier invalide','error');}};
+  r.readAsText(file);
+}
+function resetAll(){
+  if(!confirm('⚠️ Réinitialiser TOUT le contenu ? Action irréversible !'))return;
+  Object.values(K).forEach(k=>localStorage.removeItem(k));initAdmin();showToast('🗑️ Réinitialisé','info');
+}
+
+// ── STATS ──
+function updateStats(){
+  const c=gd('cakes');
+  document.getElementById('statTotal').textContent=c.length;
+  document.getElementById('statMariage').textContent=c.filter(x=>x.cat==='mariage').length;
+  document.getElementById('statAnniv').textContent=c.filter(x=>x.cat==='anniversaire').length;
+  document.getElementById('statCustom').textContent=c.filter(x=>x.cat==='custom').length;
+}
+
+// ── TOAST ──
+let tt;
+function showToast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast ${type} show`;clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),3500);}
+
+// ── UTILS ──
+function v(id){return document.getElementById(id).value;}
+
+// ── INIT ──
+function initAdmin(){updateStats();cloudCfg=ld(K.cloud)||{};}
+</script>
+</body>
+</html>
