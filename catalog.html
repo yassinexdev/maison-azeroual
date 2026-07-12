@@ -324,11 +324,21 @@
 
 <!-- ══ SPLASH SCREEN ══ -->
 <div id="splash" style="position: fixed; inset: 0; background: var(--charcoal); z-index: 9999; display: flex; align-items: center; justify-content: center; transition: opacity 0.8s ease, visibility 0.8s; opacity: 1; visibility: visible;">
-  <div style="font-family: 'Great Vibes', cursive; font-size: clamp(3rem, 8vw, 4.5rem); color: var(--gold); text-shadow: 0 0 20px rgba(201,169,110,0.3); animation: pulseLogo 1.5s ease-in-out infinite alternate;">Maison Azerwal</div>
+  <div id="splashLogo" style="font-family: 'Great Vibes', cursive; font-size: clamp(3rem, 8vw, 4.5rem); color: var(--gold); text-shadow: 0 0 20px rgba(201,169,110,0.3); opacity: 0; transition: opacity 0.5s ease;">Maison Azerwal</div>
 </div>
 <style>
-@keyframes pulseLogo { from { opacity: 0.7; transform: scale(0.98); } to { opacity: 1; transform: scale(1.02); } }
+@keyframes pulseLogo { from { transform: scale(0.98); } to { transform: scale(1.02); } }
 </style>
+<script>
+  // Prevent Flash of Unstyled Text (FOUT) by waiting for the font to load
+  document.fonts.ready.then(() => {
+    const sLogo = document.getElementById('splashLogo');
+    if(sLogo) {
+      sLogo.style.opacity = '1';
+      sLogo.style.animation = 'pulseLogo 1.5s ease-in-out infinite alternate';
+    }
+  });
+</script>
 
 <!-- ══ HEADER ══ -->
 <header class="cat-header">
