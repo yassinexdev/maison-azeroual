@@ -13,6 +13,7 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://yassinexdev.github.io/maison-azeroual/catalog.html">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@200;300;400;500&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -321,6 +322,14 @@
 </head>
 <body>
 
+<!-- ══ SPLASH SCREEN ══ -->
+<div id="splash" style="position: fixed; inset: 0; background: var(--charcoal); z-index: 9999; display: flex; align-items: center; justify-content: center; transition: opacity 0.8s ease, visibility 0.8s; opacity: 1; visibility: visible;">
+  <div style="font-family: 'Great Vibes', cursive; font-size: clamp(3rem, 8vw, 4.5rem); color: var(--gold); text-shadow: 0 0 20px rgba(201,169,110,0.3); animation: pulseLogo 1.5s ease-in-out infinite alternate;">Maison Azerwal</div>
+</div>
+<style>
+@keyframes pulseLogo { from { opacity: 0.7; transform: scale(0.98); } to { opacity: 1; transform: scale(1.02); } }
+</style>
+
 <!-- ══ HEADER ══ -->
 <header class="cat-header">
   <div class="cat-header-ornament">Pâtisserie d'Art Nuptiale</div>
@@ -445,6 +454,17 @@ function closeLightbox(e) {
 
 // Close on Escape
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.getElementById('lightbox').classList.remove('open'); document.body.style.overflow = ''; } });
+
+// ══ SPLASH SCREEN HIDE ══
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const splash = document.getElementById('splash');
+    if(splash) {
+      splash.style.opacity = '0';
+      splash.style.visibility = 'hidden';
+    }
+  }, 500); // 500ms delay to enjoy the logo
+});
 
 render();
 </script>
