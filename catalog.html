@@ -318,6 +318,20 @@
     .wa-sticky span { display: none; }
     .wa-sticky { padding: 16px; border-radius: 50%; }
   }
+  
+  /* ══ SHARE BUTTON ══ */
+  .share-btn {
+    position: absolute; top: 32px; right: 36px;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(201,169,110,0.25);
+    color: var(--gold); border-radius: 50%;
+    width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.3s ease; z-index: 10;
+  }
+  .share-btn:hover { background: rgba(201,169,110,0.15); transform: translateY(-2px); border-color: rgba(201,169,110,0.6); }
+  @media (max-width: 500px) {
+    .share-btn { top: 20px; right: 20px; width: 38px; height: 38px; }
+    .share-btn svg { width: 16px; }
+  }
 </style>
 </head>
 <body>
@@ -342,6 +356,9 @@
 
 <!-- ══ HEADER ══ -->
 <header class="cat-header">
+  <button id="shareBtn" class="share-btn" title="Partager le catalogue">
+    <svg viewBox="0 0 24 24" width="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+  </button>
   <div class="cat-header-ornament">Pâtisserie d'Art Nuptiale</div>
   <div class="cat-logo">Maison Azerwal</div>
   <div class="cat-tagline">Catalogue de Mariage · Édition 2026</div>
@@ -474,6 +491,35 @@ window.addEventListener('load', () => {
       splash.style.visibility = 'hidden';
     }
   }, 500); // 500ms delay to enjoy the logo
+});
+
+// ══ SHARE API ══
+document.getElementById('shareBtn').addEventListener('click', async () => {
+  const shareData = {
+    title: 'Catalogue 2026 — Maison Azerwal',
+    text: 'Découvrez notre sélection de pièces montées de mariage artisanales.',
+    url: window.location.href
+  };
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+    } else if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(shareData.url);
+      alert('Lien du catalogue copié dans le presse-papiers !');
+    } else {
+      // Fallback for local testing (file:///)
+      const el = document.createElement('textarea');
+      el.value = shareData.url;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      alert('Lien du catalogue copié dans le presse-papiers !');
+    }
+  } catch (err) {
+    console.error('Erreur de partage', err);
+    alert('Le lien est : ' + shareData.url);
+  }
 });
 
 render();
