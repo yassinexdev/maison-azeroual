@@ -210,9 +210,8 @@ textarea.fi{resize:vertical;}
               <div class="img-box" id="cf-img-box" style="width:140px;height:100px;"><div class="img-ph">🎂</div></div>
               <div class="img-ctrl">
                 <input type="text" class="url-input" id="cf-img" placeholder="https://... URL de l'image" oninput="previewImg('cf-img','cf-img-box')">
-                <label class="upload-lbl">📤 Uploader depuis l'ordinateur<input type="file" class="upload-file" accept="image/*" onchange="handleUpload(this,'cf-img','cf-img-box')"></label>
-                <div class="prog-bar" id="cf-prog"><div class="prog-inner"><div class="prog-fill" id="cf-prog-fill"></div></div></div>
-                <div class="img-note">ou collez une URL directe (imgbb, Unsplash, Cloudinary…)</div>
+                <label class="upload-lbl">📁 Choisir depuis l'ordinateur<input type="file" class="upload-file" accept="image/*" onchange="handleUpload(this,'cf-img','cf-img-box')"></label>
+                <div class="img-note">💡 Choisissez votre photo → copiez-la dans le dossier <strong>images/</strong> du projet → git push. Ou collez une URL directe (imgbb, Cloudinary…)</div>
               </div>
             </div>
           </div>
@@ -258,8 +257,8 @@ textarea.fi{resize:vertical;}
           <div class="img-box" id="h-img-box" style="width:160px;height:110px;"><div class="img-ph">🎂</div></div>
           <div class="img-ctrl">
             <input type="text" class="url-input" id="h-img" placeholder="URL de l'image hero" oninput="previewImg('h-img','h-img-box')">
-            <label class="upload-lbl">📤 Uploader depuis l'ordinateur<input type="file" class="upload-file" accept="image/*" onchange="handleUpload(this,'h-img','h-img-box')"></label>
-            <div class="prog-bar" id="h-prog"><div class="prog-inner"><div class="prog-fill" id="h-prog-fill"></div></div></div>
+            <label class="upload-lbl">📁 Choisir depuis l'ordinateur<input type="file" class="upload-file" accept="image/*" onchange="handleUpload(this,'h-img','h-img-box')"></label>
+            <div class="img-note">💡 Choisissez votre photo → copiez-la dans <strong>images/</strong> → git push</div>
           </div>
         </div>
       </div>
@@ -286,8 +285,8 @@ textarea.fi{resize:vertical;}
           <div class="img-box" id="ab-img-box" style="width:110px;height:150px;"><div class="img-ph">👤</div></div>
           <div class="img-ctrl">
             <input type="text" class="url-input" id="ab-img" placeholder="URL de votre photo portrait" oninput="previewImg('ab-img','ab-img-box')">
-            <label class="upload-lbl">📤 Uploader depuis l'ordinateur<input type="file" class="upload-file" accept="image/*" onchange="handleUpload(this,'ab-img','ab-img-box')"></label>
-            <div class="prog-bar" id="ab-prog"><div class="prog-inner"><div class="prog-fill" id="ab-prog-fill"></div></div></div>
+            <label class="upload-lbl">📁 Choisir depuis l'ordinateur<input type="file" class="upload-file" accept="image/*" onchange="handleUpload(this,'ab-img','ab-img-box')"></label>
+            <div class="img-note">💡 Choisissez votre photo → copiez-la dans <strong>images/</strong> → git push</div>
           </div>
         </div>
       </div>
@@ -371,7 +370,7 @@ textarea.fi{resize:vertical;}
         <div class="ecard-title">🖼️ Photos de la grille (6 photos affichées)</div>
         <div id="igList" style="display:flex;flex-direction:column;gap:12px;margin-bottom:18px;"></div>
         <div style="background:var(--gold-pale);border-left:3px solid var(--gold);padding:14px 18px;font-size:.78rem;color:var(--warm-brown);">
-          💡 Uploadez vos vraies photos Instagram ou collez leurs URLs directes depuis imgbb.com ou Cloudinary.
+          💡 Workflow recommandé : choisissez vos photos → copiez-les dans le dossier <strong>images/</strong> de votre projet → git push. Le chemin sera automatiquement <code style="background:rgba(0,0,0,.1);padding:1px 6px;">./images/nom-du-fichier.jpg</code>
         </div>
       </div>
       <div class="btn-row"><button class="btn-save" onclick="saveInstagram()">💾 Sauvegarder Instagram</button></div>
@@ -479,22 +478,20 @@ function setBox(id,url){
 }
 async function handleUpload(fi,inId,boxId){
   const file=fi.files[0];if(!file)return;
-  // Instant local preview
+  // Instant local preview via FileReader
   const r=new FileReader();
-  r.onload=e=>setBox(boxId,e.target.result);
+  r.onload=e=>{setBox(boxId,e.target.result);};
   r.readAsDataURL(file);
-  if(!cloudCfg.cloudName||!cloudCfg.uploadPreset){
-    // Base64 fallback
-    const r2=new FileReader();
-    r2.onload=e=>{document.getElementById(inId).value=e.target.result;showToast('✅ Image chargée (configurez Cloudinary pour des URLs permanentes)','info');};
-    r2.readAsDataURL(file);return;
-  }
-  // Cloudinary
-  const fd=new FormData();fd.append('file',file);fd.append('upload_preset',cloudCfg.uploadPreset);
-  const xhr=new XMLHttpRequest();
-  xhr.onload=()=>{try{const res=JSON.parse(xhr.responseText);if(res.secure_url){document.getElementById(inId).value=res.secure_url;setBox(boxId,res.secure_url);showToast('✅ Image uploadée sur Cloudinary !','success');}}catch{showToast('Erreur upload','error');}};
-  xhr.onerror=()=>showToast('Erreur réseau','error');
-  xhr.open('POST',`https://api.cloudinary.com/v1_1/${cloudCfg.cloudName}/image/upload`);xhr.send(fd);
+  // Set path to ./images/<filename> — user must copy the file into the images/ folder
+  const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+  const localPath='./images/'+safeName;
+  document.getElementById(inId).value=localPath;
+  // Show a prominent instruction banner
+  let banner=document.getElementById('img-copy-banner');
+  if(!banner){banner=document.createElement('div');banner.id='img-copy-banner';banner.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;background:#1e1710;color:#f0e4c8;padding:14px 24px;font-size:.82rem;font-family:Jost,sans-serif;display:flex;align-items:center;justify-content:space-between;gap:16px;box-shadow:0 4px 20px rgba(0,0,0,.4);';document.body.appendChild(banner);}
+  banner.innerHTML=`<span>📁 <strong>Action requise :</strong> Copiez le fichier <code style="background:rgba(255,255,255,.1);padding:2px 8px;border-radius:3px;">${file.name}</code> dans le dossier <code style="background:rgba(255,255,255,.1);padding:2px 8px;border-radius:3px;">images/</code> de votre projet, puis faites un <strong>git push</strong> pour que l'image apparaisse sur le site.</span><button onclick="document.getElementById('img-copy-banner').style.display='none'" style="background:rgba(255,255,255,.15);border:none;color:#f0e4c8;cursor:pointer;padding:6px 14px;font-family:Jost,sans-serif;font-size:.75rem;white-space:nowrap;">✕ Fermer</button>`;
+  banner.style.display='flex';
+  showToast('📁 Copiez "'+file.name+'" dans le dossier images/ puis faites git push','info');
 }
 
 // ── GALLERY ──
@@ -649,16 +646,31 @@ function renderIgList(photos){
         <input type="text" class="url-input" value="${p.alt||''}" placeholder="Description (texte alternatif)" oninput="updIg(${i},'alt',this.value)" style="font-size:.78rem;">
       </div>
       <label class="upload-lbl" style="flex-shrink:0;font-size:.65rem;">
-        📤 Upload<input type="file" class="upload-file" accept="image/*" onchange="handleIgUp(this,${i})">
+        📁 Choisir<input type="file" class="upload-file" accept="image/*" onchange="handleIgUp(this,${i})">
       </label>
     </div>`).join('');
 }
 function updIg(i,f,val){const d=gd('instagram');if(d.photos[i])d.photos[i][f]=val;sv(K.instagram,d);}
 function handleIgUp(fi,i){
   const file=fi.files[0];if(!file)return;
+  // Show local preview
   const r=new FileReader();
-  r.onload=e=>{updIg(i,'img',e.target.result);loadInstagram();showToast('✅ Photo chargée','success');};
+  r.onload=e=>{
+    const d=gd('instagram');
+    if(d.photos[i])d.photos[i]._preview=e.target.result;
+    sv(K.instagram,d);
+  };
   r.readAsDataURL(file);
+  // Set permanent path
+  const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+  const localPath='./images/'+safeName;
+  updIg(i,'img',localPath);
+  loadInstagram();
+  let banner=document.getElementById('img-copy-banner');
+  if(!banner){banner=document.createElement('div');banner.id='img-copy-banner';banner.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;background:#1e1710;color:#f0e4c8;padding:14px 24px;font-size:.82rem;font-family:Jost,sans-serif;display:flex;align-items:center;justify-content:space-between;gap:16px;box-shadow:0 4px 20px rgba(0,0,0,.4);';document.body.appendChild(banner);}
+  banner.innerHTML=`<span>📁 <strong>Action requise :</strong> Copiez <code style="background:rgba(255,255,255,.1);padding:2px 8px;border-radius:3px;">${file.name}</code> dans <code style="background:rgba(255,255,255,.1);padding:2px 8px;border-radius:3px;">images/</code>, puis <strong>git push</strong>.</span><button onclick="document.getElementById('img-copy-banner').style.display='none'" style="background:rgba(255,255,255,.15);border:none;color:#f0e4c8;cursor:pointer;padding:6px 14px;font-family:Jost,sans-serif;font-size:.75rem;white-space:nowrap;">✕ Fermer</button>`;
+  banner.style.display='flex';
+  showToast('📁 Copiez "'+file.name+'" dans images/ puis git push','info');
 }
 function saveInstagram(){
   const d=gd('instagram');sv(K.instagram,{...d,handle:v('ig-handle'),url:v('ig-url'),btnText:v('ig-btn')});
